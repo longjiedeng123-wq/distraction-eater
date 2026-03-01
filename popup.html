@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    /* Modern Color Palette & Variables */
+    :root {
+      --bg: #ffffff;
+      --surface: #f3f4f6;
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --danger: #ef4444;
+      --danger-hover: #dc2626;
+      --success: #10b981;
+      --success-hover: #059669;
+      --text-main: #111827;
+      --text-muted: #6b7280;
+      --border: #e5e7eb;
+    }
+
+    *, *:before, *:after { box-sizing: border-box; }
+    
+    body { 
+      width: 320px; 
+      margin: 0; 
+      padding: 20px; 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+      color: var(--text-main);
+      background: var(--bg);
+    }
+
+    .header { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
+    .header h3 { margin: 0; font-size: 1.25rem; font-weight: 800; color: var(--primary); letter-spacing: -0.5px;}
+    .icon { width: 28px; height: 28px; object-fit: contain; }
+
+    .mode-selector {
+      display: flex; background: var(--surface); padding: 4px; border-radius: 8px; margin-bottom: 15px;
+    }
+    .mode-selector label { flex: 1; text-align: center; cursor: pointer; }
+    .mode-selector input[type="radio"] { display: none; }
+    .mode-selector span { 
+      display: block; width: 100%; padding: 8px 0; border-radius: 6px; 
+      font-size: 0.9rem; font-weight: 600; color: var(--text-muted); transition: 0.2s;
+    }
+    .mode-selector input[type="radio"]:checked + span {
+      background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); color: var(--primary);
+    }
+
+    #applyModeBtn {
+      width: 100%; background: var(--success); color: white; border: none; padding: 10px;
+      border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+    }
+    #applyModeBtn:hover { background: var(--success-hover); transform: translateY(-1px); }
+
+    .input-group { display: flex; gap: 8px; margin-bottom: 15px; }
+    .form-col { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
+    
+    input[type="text"], input[type="password"] {
+      width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px;
+      font-size: 0.9rem; outline: none; transition: 0.2s; background: #fafafa;
+    }
+    input:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
+    
+    .show-pwd-label { font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; }
+    
+    button { padding: 10px 16px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-secondary { background: var(--surface); color: var(--text-main); border: 1px solid var(--border); }
+    .btn-secondary:hover { background: #e5e7eb; }
+    .btn-danger { background: var(--danger); color: white; }
+    .btn-danger:hover { background: var(--danger-hover); }
+
+    .divider { height: 1px; background: var(--border); margin: 15px 0; }
+
+    ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+    li {
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--surface); padding: 10px 12px; border-radius: 8px; border: 1px solid transparent; transition: 0.2s;
+    }
+    li:hover { border-color: var(--border); background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+    .site-text { font-weight: 500; font-size: 0.9rem; word-break: break-all; margin-right: 10px; }
+    .delete-btn { background: #fee2e2; color: var(--danger); padding: 6px 10px; border-radius: 6px; font-size: 0.8rem; }
+    .delete-btn:hover { background: #fecaca; color: var(--danger-hover); }
+
+    #passwordActiveState {
+      display: none; justify-content: space-between; align-items: center; 
+      background: #ecfdf5; border: 1px solid #a7f3d0; padding: 10px 12px; border-radius: 8px; margin-bottom: 15px;
+    }
+    .status-badge { color: var(--success); font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; }
+
+    .custom-modal {
+      display: none; background: white; border: 1px solid var(--border); border-radius: 10px;
+      padding: 16px; margin-top: 15px; 
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      animation: slideDown 0.2s ease-out;
+    }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    
+    .modal-title { margin: 0 0 12px 0; font-size: 0.9rem; font-weight: 600; color: var(--text-main); }
+    .modal-inputs { display: flex; flex-direction: column; gap: 10px; }
+    .modal-buttons { display: flex; gap: 8px; margin-top: 4px; }
+    .modal-buttons button { flex: 1; padding: 8px; font-size: 0.9rem; }
+    .error-text { color: var(--danger); font-size: 0.8rem; margin: 8px 0 0 0; font-weight: 600; text-align: center; display: none; }
+    .success-text { color: var(--success); font-size: 0.8rem; margin: 8px 0 0 0; font-weight: 600; text-align: center; display: none; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h3>Distraction Eater</h3>
+    <img src="icon.png" class="icon" alt="Focus Blocker Logo">
+  </div>
+  
+  <div class="mode-selector">
+    <label><input type="radio" name="mode" value="blacklist" checked><span>Blacklist</span></label>
+    <label><input type="radio" name="mode" value="whitelist"><span>Whitelist</span></label>
+  </div>
+  
+  <button id="applyModeBtn">Apply Mode</button>
+  
+  <div class="input-group">
+    <input type="text" id="siteInput" placeholder="e.g., twitter.com" autocomplete="off" style="flex-grow:1;">
+    <button id="addBtn" class="btn-primary">Add</button>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="form-col" id="passwordSetupForm">
+    <input type="password" id="passwordInput" placeholder="Set a removal password">
+    <input type="password" id="confirmPasswordInput" placeholder="Confirm password">
+    <label class="show-pwd-label">
+      <input type="checkbox" id="showPwdSetup"> Show passwords
+    </label>
+    <p id="setupError" class="error-text">Passwords do not match!</p>
+    <p id="setupSuccess" class="success-text">Password saved successfully!</p>
+    <button id="savePasswordBtn" class="btn-primary">Save Password</button>
+  </div>
+
+  <div id="passwordActiveState">
+    <div class="status-badge"><span>Password</span> Protected</div>
+    <button id="openChangePwdBtn" class="btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;">Change</button>
+  </div>
+
+  <ul id="blockList"></ul>
+
+  <div id="passwordModal" class="custom-modal">
+    <p id="modalSiteText" class="modal-title"></p>
+    <div class="modal-inputs">
+      <input type="password" id="modalPasswordInput" placeholder="Enter password">
+      <label class="show-pwd-label">
+        <input type="checkbox" id="showPwdRemove"> Show password
+      </label>
+      <div class="modal-buttons">
+        <button id="modalConfirmBtn" class="btn-danger">Remove</button>
+        <button id="modalCancelBtn" class="btn-secondary">Cancel</button>
+      </div>
+    </div>
+    <p id="modalErrorText" class="error-text">Incorrect password! Focus up!</p>
+  </div>
+
+  <div id="changePwdModal" class="custom-modal">
+    <p class="modal-title">Change Password</p>
+    <div class="modal-inputs">
+      <input type="password" id="oldPwdInput" placeholder="Current password">
+      <input type="password" id="newPwdInput" placeholder="New password">
+      <input type="password" id="confirmNewPwdInput" placeholder="Confirm new password">
+      <label class="show-pwd-label">
+        <input type="checkbox" id="showPwdChange"> Show passwords
+      </label>
+      <div class="modal-buttons">
+        <button id="confirmChangePwdBtn" class="btn-primary">Update</button>
+        <button id="cancelChangePwdBtn" class="btn-secondary">Cancel</button>
+      </div>
+    </div>
+    <p id="changePwdError" class="error-text"></p>
+    <p id="changePwdSuccess" class="success-text">Password updated successfully!</p>
+  </div>
+
+  <script src="popup.js"></script> 
+</body>
+</html>
