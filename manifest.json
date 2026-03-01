@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Distraction Eater",
+  "version": "1.0",
+  "description": "Feeds on your distractions so you can focus!",
+  "permissions": ["webNavigation", "tabs"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Feed the Eater"
+  }
+}
